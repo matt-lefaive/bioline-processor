@@ -4,9 +4,8 @@ The *Bioline Preprocessor* performs a preprocessing of XML files used to display
 This script will also generate a journal `Problems.txt` file to be completed by an employee during the "proofing" stage.
 
 ## Usage
-1. Open a terminal and navigate to the folder containing `preprocess.py` (and all the other project files)
-2. Type: `python process.py -p <PATH>` where `<PATH>` is the path to the folder containing XML files to be preprocessed.  
-![C:\bioline-preprocessor>python process.py](media/1.gif)  
+1. Open a terminal and navigate to the folder containing `process.py` (and all the other project files)
+2. Type: `python process.py -p <PATH>` where `<PATH>` is the path to the folder containing XML files to be preprocessed.   
 If this is your first time processing an issue for a given journal, you will be prompted to input information to create a `.config` file that will be loaded the next time you process an issue from this journal
 3. Follow any remaining on-screen prompts to correct errors found in the XML files (if any)
 4. You're done!
