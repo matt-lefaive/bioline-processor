@@ -4,6 +4,7 @@ import sys
 import getopt
 import xml.etree.ElementTree as ET
 from typing import List, Dict, Tuple, Union, Optional
+from species_link import insert_species_links
 
 
 def bval(b: str) -> bool:
@@ -84,7 +85,7 @@ def save_config(journal_code, config: Dict[str, Union[str, bool, int]]) -> None:
 	'''
 	config_f = open(f'./config/{journal_code}.config', 'w')
 	for key in config.keys():
-		config_f.write(key + '=' + str(config[key]) + '\n' * (0 if key == 'SPECIESLINKS' else 1))
+		config_f.write(key + '=' + str(config[key]) + '\n' * (0 if key == 'SPLITKEYWORDS' else 1))
 	config_f.close()
 
 def already_processed(elem):
@@ -455,19 +456,24 @@ for filename in os.listdir(filepath):
                     if sub_elem.tag == 'lastname' and re.match(r'^(N ?A ?|N ?/A ?|N ?\.A\.? ?)', sub_elem.text, re.I):
                         sub_elem.text = ''
 
+
+        # Insert species links if appropriate
+        if species_links:
+            insert_species_links(root)
+
         # If we're in debug mode, print lines to console. Otherwise save to file
         text = ET.tostring(root, encoding='unicode').replace('&lt;', '<').replace('&gt;', '>')
         if DEBUG:
             print(f'----------\n{text}\n----------')
         else:
-            f = open(filepath + filename, "w")
+            f = open(filepath + filename, 'w')
             f.write(text)
             f.close()
 
-print('Completed XML processing!')
+print('Completed XML processing!\n')
 print('Generating problems.txt...')
 write_problems_file(f'{filepath}../{journal_code}{volume}({number}) Problems.txt', file_to_volume)
-print('Proofing file generated!')
+print('Proofing file generated!\n')
 print('Running discrepancy analysis...')
 
 # Fix any possible outliers in volume, number, and year if desired
@@ -490,5 +496,3 @@ if exists_discrepancies(file_to_year, year):
 
 
 print("Done!")
-
-            

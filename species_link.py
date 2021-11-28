@@ -179,7 +179,7 @@ def insert_species_links(root):
         for genus in genus_to_species[j].keys():
             # The following regex matches species links for any species of a given genus currently processed
             master_reg = r'<taxon genus="' + re.escape(genus) + r'" species="('
-            for i in range(len(genus_to_species[j][genus]) - 1):
+            for i in range(len(genus_to_species[j][genus])):
                 if i < len(genus_to_species[j][genus]) - 1:
                     master_reg += re.escape(f'{genus_to_species[j][genus][i]}') + '|'
                 else:
