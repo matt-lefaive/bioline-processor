@@ -16,5 +16,3 @@ Arg | Description
 `-d`, `--debug` | Turns on debug mode. Processed XML files will be printed to `stdout` instead of being overwritten
 `-p <PATH>`, `--path <PATH>` | Specify the path to the XML folder containing files to be processed.
 
-## Bulk Preprocessing
-Use `python bulk-process.py -f <FILE>` to preprocess multiple issues at the same time. The `<FILE>` argument must point to a text file containing a list of complete paths to XML folders (as per `<PATH>` above), where each path is written on its own line.
