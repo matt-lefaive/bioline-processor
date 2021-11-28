@@ -1,5 +1,5 @@
 # Bioline Processor
-The *Bioline Preprocessor* performs a preprocessing of XML files used to display abstracts at [Bioline International](http://www.bioline.org.br/). It fills in information that would previously have to be manually entered by an employee while simultaneously correcting common errors from the submission process. 
+The *Bioline Processor* performs a preprocessing of XML files used to display abstracts at [Bioline International](http://www.bioline.org.br/). It fills in information that would previously have to be manually entered by an employee while simultaneously correcting common errors from the submission process. 
 
 This script will also generate a journal `Problems.txt` file to be completed by an employee during the "proofing" stage.
 
