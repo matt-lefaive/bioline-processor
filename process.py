@@ -384,7 +384,7 @@ print('Starting XML processing')
 for filename in os.listdir(filepath):
     if filename.endswith('.xml'):
         # Parse XML into a tree and loop through all tags
-        tree = ET.parse(filepath + filename)
+        tree = ET.parse(filepath + filename, parser=ET.XMLParser(encoding='utf-8'))
         root = tree.getroot()
         for elem in root.iter():
             if elem.tag == 'article':
@@ -392,6 +392,8 @@ for filename in os.listdir(filepath):
                 if already_processed(elem):
                     print('Already processed ' + filename + '...')
                     continue
+                else:
+                    print('Processing ' + filename)
 
                 # [ ] Set ID
                 elem.attrib['id'] = filename[0:-4]
@@ -462,11 +464,11 @@ for filename in os.listdir(filepath):
             insert_species_links(root)
 
         # If we're in debug mode, print lines to console. Otherwise save to file
-        text = ET.tostring(root, encoding='unicode').replace('&lt;', '<').replace('&gt;', '>')
+        text = ET.tostring(root, encoding='unicode').replace(r'&lt;(/)?(i|b|sup|sub)&gt;', '<\g<1>\g<2>>')
         if DEBUG:
             print(f'----------\n{text}\n----------')
         else:
-            f = open(filepath + filename, 'w')
+            f = open(filepath + filename, 'w', encoding='utf-8')
             f.write(text)
             f.close()
 
