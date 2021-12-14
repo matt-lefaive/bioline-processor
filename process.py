@@ -259,11 +259,11 @@ def fix_discrepancies(files: Dict[str, str], directory_path: str, disc_type: str
         index.text = ' '.join(index_tokens)
 
         # If we're in debug mode, print lines to console. Otherwise save to file
-        text = ET.tostring(root, encoding='unicode').replace('&lt;', '<').replace('&gt;', '>')
+        text = ET.tostring(root, encoding='unicode').replace(r'&lt;(/)?(i|b|sup|sub)&gt;', '<\g<1>\g<2>>')
         if DEBUG:
             pass
         else:
-            f = open(filepath + filename, 'w')
+            f = open(filepath + filename, 'w', encoding='utf-8')
             f.write(text)
             f.close()
 
