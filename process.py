@@ -259,7 +259,7 @@ def fix_discrepancies(files: Dict[str, str], directory_path: str, disc_type: str
         index.text = ' '.join(index_tokens)
 
         # If we're in debug mode, print lines to console. Otherwise save to file
-        text = ET.tostring(root, encoding='unicode').replace(r'&lt;(/)?(i|b|sup|sub)&gt;', '<\g<1>\g<2>>')
+        text = ET.tostring(root, encoding='unicode').replace(r'&lt;(/)?(i|b|sup|sub|br/)&gt;', '<\g<1>\g<2>>')
         if DEBUG:
             pass
         else:
@@ -384,8 +384,10 @@ print('Starting XML processing')
 for filename in os.listdir(filepath):
     if filename.endswith('.xml'):
         # Parse XML into a tree and loop through all tags
-        tree = ET.parse(filepath + filename, parser=ET.XMLParser(encoding='utf-8'))
-        root = tree.getroot()
+        f = open(filepath + filename, 'r')
+        root = ET.fromstring(f.read())
+        f.close()
+
         for elem in root.iter():
             if elem.tag == 'article':
                 # [ ] Check if this file has already been processed (skip if so)
@@ -464,7 +466,7 @@ for filename in os.listdir(filepath):
             insert_species_links(root)
 
         # If we're in debug mode, print lines to console. Otherwise save to file
-        text = ET.tostring(root, encoding='unicode').replace(r'&lt;(/)?(i|b|sup|sub)&gt;', '<\g<1>\g<2>>')
+        text = ET.tostring(root).decode('utf-8').replace(r'&lt;(/)?(i|b|sup|sub|br/)&gt;', '<\g<1>\g<2>>')
         if DEBUG:
             print(f'----------\n{text}\n----------')
         else:
