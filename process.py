@@ -388,27 +388,29 @@ for filename in os.listdir(filepath):
         root = ET.fromstring(f.read())
         f.close()
 
+        if root.tag == 'article':
+            # [ ] Check if this file has already been processed (skip if so)
+            if already_processed(root):
+                print('Already processed ' + filename + '...')
+                continue
+            else:
+                print('Processing ' + filename)
+
+            # [ ] Set ID
+            root.attrib['id'] = filename[0:-4]
+
+            # [ ] Fix redundant page numbers, if possible
+            fix_redundant_page_numbers(root)
+
+            # [ ] Add <article> attributes to discrepancy dictionaries
+            file_to_volume[filename] = root.attrib['volume']
+            file_to_number[filename] = root.attrib['number']
+            file_to_year[filename] = root.attrib['year']
+
+
         for elem in root.iter():
-            if elem.tag == 'article':
-                # [ ] Check if this file has already been processed (skip if so)
-                if already_processed(elem):
-                    print('Already processed ' + filename + '...')
-                    continue
-                else:
-                    print('Processing ' + filename)
-
-                # [ ] Set ID
-                elem.attrib['id'] = filename[0:-4]
-
-                # [ ] Fix redundant page numbers, if possible
-                fix_redundant_page_numbers(elem)
-
-                # [ ] Add <article> attributes to discrepancy dictionaries
-                file_to_volume[filename] = elem.attrib['volume']
-                file_to_number[filename] = elem.attrib['number']
-                file_to_year[filename] = elem.attrib['year']
             
-            elif elem.tag == 'title':
+            if elem.tag == 'title':
                 # [ ] Replace NA titles if applicable
                 if re.match(r'^(N ?A ?|N ?/A ?|N ?\.A\.? ?)', elem.text, re.I):
                     elem.text = ''
