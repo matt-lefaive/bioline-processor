@@ -259,7 +259,7 @@ def fix_discrepancies(files: Dict[str, str], directory_path: str, disc_type: str
         index.text = ' '.join(index_tokens)
 
         # If we're in debug mode, print lines to console. Otherwise save to file
-        text = ET.tostring(root, encoding='unicode').replace(r'&lt;(/)?(i|b|sup|sub|br/)&gt;', '<\g<1>\g<2>>')
+        text = re.sub(r'&lt;(/)?(i|b|sup|sub|br/)&gt;', r'<\g<1>\g<2>>', ET.tostring(root).decode('utf-8'))
         if DEBUG:
             pass
         else:
@@ -389,20 +389,20 @@ for filename in os.listdir(filepath):
         f.close()
 
         if root.tag == 'article':
-            # [ ] Check if this file has already been processed (skip if so)
+            # Check if this file has already been processed (skip if so)
             if already_processed(root):
                 print('Already processed ' + filename + '...')
                 continue
             else:
                 print('Processing ' + filename)
 
-            # [ ] Set ID
+            # Set ID
             root.attrib['id'] = filename[0:-4]
 
-            # [ ] Fix redundant page numbers, if possible
+            # Fix redundant page numbers, if possible
             fix_redundant_page_numbers(root)
 
-            # [ ] Add <article> attributes to discrepancy dictionaries
+            # Add <article> attributes to discrepancy dictionaries
             file_to_volume[filename] = root.attrib['volume']
             file_to_number[filename] = root.attrib['number']
             file_to_year[filename] = root.attrib['year']
@@ -411,33 +411,33 @@ for filename in os.listdir(filepath):
         for elem in root.iter():
             
             if elem.tag == 'title':
-                # [ ] Replace NA titles if applicable
+                # Replace NA titles if applicable
                 if re.match(r'^(N ?A ?|N ?/A ?|N ?\.A\.? ?)', elem.text, re.I):
                     elem.text = ''
 
-                # [ ] Apply common textual substitutions to title
+                # Apply common textual substitutions to title
                 if text_subs:
                     common_text_subs(elem)
 
             elif elem.tag == 'copyright':
-                # [ ] Fill in copyright information
+                # Fill in copyright information
                 if copyright.lower() == 'default':
                     elem.text = f'Copyright {year} - {elem.text}'
                 else:
                     elem.text = f'Copyright {year} - {copyright}'
 
             elif elem.tag == 'keyword':
-                # [ ] Remove superfluous commas from keywords
+                # Remove superfluous commas from keywords
                 elem.text = elem.text.replace(',;', ';')
                 if split_keywords:
                     elem.text = elem.text.replace(',', ';')
 
             elif elem.tag == 'index':
-                # [ ] Update id in the index tag
+                # Update id in the index tag
                 elem.text = elem.text.replace(f'{journal_code}xxx', filename[:-4])
 
             elif elem.tag == 'abstract':
-                # [ ] Add linebreaks, bolding, and italics to common headers
+                # Add linebreaks, bolding, and italics to common headers
                 if bold_headers and italic_headers:
                     surround_headers(elem, '<br/>' * before_newline_count + '<b><i>', '<b><i>', '</i></b>' + '<br/>' * after_newline_count)
                 elif bold_headers:
@@ -447,17 +447,17 @@ for filename in os.listdir(filepath):
                 elif before_newline_count > 0 or after_newline_count > 0:
                     surround_headers(elem, '<br/>' * before_newline_count, '', '<br/>' * after_newline_count)
 
-                # [ ] Apply common textual substitutions to abstract
+                # Apply common textual substitutions to abstract
                 if text_subs:
                     common_text_subs(elem)
 
             elif elem.tag == 'author':
-                # [ ] Remove NA author
+                # Remove NA author
                 if re.match(r'^(N ?A ?|N ?/A ?|N ?\.A\.? ?)', elem.text, re.I):
                     elem.text = ''
 
             elif elem.tag == 'authors':
-                # [ ] Remove NA authors
+                # Remove NA authors
                 for sub_elem in elem.iter():
                     if sub_elem.tag == 'lastname' and re.match(r'^(N ?A ?|N ?/A ?|N ?\.A\.? ?)', sub_elem.text, re.I):
                         sub_elem.text = ''
@@ -468,7 +468,7 @@ for filename in os.listdir(filepath):
             insert_species_links(root)
 
         # If we're in debug mode, print lines to console. Otherwise save to file
-        text = ET.tostring(root).decode('utf-8').replace(r'&lt;(/)?(i|b|sup|sub|br/)&gt;', '<\g<1>\g<2>>')
+        text = re.sub(r'&lt;(/)?(i|b|sup|sub|br/)&gt;', r'<\g<1>\g<2>>', ET.tostring(root).decode('utf-8'))
         if DEBUG:
             print(f'----------\n{text}\n----------')
         else:
