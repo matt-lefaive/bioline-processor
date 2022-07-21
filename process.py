@@ -88,14 +88,14 @@ def save_config(journal_code, config: Dict[str, Union[str, bool, int]]) -> None:
 		config_f.write(key + '=' + str(config[key]) + '\n' * (0 if key == 'SPLITKEYWORDS' else 1))
 	config_f.close()
 
-def already_processed(elem):
+def already_processed(elem: ET) -> bool:
     return not elem.attrib['id'] == journal_code + 'xxx'
 
-def fix_redundant_page_numbers(elem):
+def fix_redundant_page_numbers(elem: ET) -> None:
     if re.match(r'(\d+)-\1$', elem.attrib['pages']):
         elem.attrib['pages'] = elem.attrib['pages'][:elem.attrib['pages'].index('-')]
 
-def surround_headers(elem, front, intro_front, back):
+def surround_headers(elem: ET, front: str, intro_front: str, back: str) -> None:
     intro_headers = [
         r'background(:|\n)?', r'context(:|\n)?', r'introduction(:|\n)?', r'purpose(:|\n)?',
         r'case presentation(:|\n)'
@@ -131,13 +131,12 @@ def surround_headers(elem, front, intro_front, back):
     # It's possible for some multi-word headers to get extra formatting
     elem.text = re.sub(r'<br/><b>(Materials and \n?<br/><b>Methods(:|\n)?)</b></b>', r'<br/><b>\g<1></b>', elem.text, flags=re.I)
         
-def common_text_subs(elem):
+def common_text_subs(elem: ET) -> None:
 	"""
 	Formats words that predominantly require the processor to manually format 
 	them with their most commonly formatted variant.
 
-	:param text: text in which to replace unformatted words
-	:returns: text with proper xml format tags applied
+	:param elem: element whose text is to have unformatted words replaced
 	"""
 	
 	txt_substitutions = {
@@ -483,7 +482,7 @@ print('Proofing file generated!\n')
 print('Running discrepancy analysis...')
 
 # Fix any possible outliers in volume, number, and year if desired
-confirmation = f"Would you like to automatically fix these problems? (y/n)"
+confirmation = f"Would you like to automatically fix these problems? (y/n): s"
 
 if exists_discrepancies(file_to_volume, volume):
     problems = print_discrepancy_report(file_to_volume, 'volume')
